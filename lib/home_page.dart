@@ -35,10 +35,10 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           AnimatedOpacity(
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 500),
             opacity: closeTopContainer ? 0 : 1,
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 500),
               width: size.width,
               alignment: Alignment.topCenter,
               height: closeTopContainer ? 0 : categoryHeight,
@@ -113,49 +113,54 @@ class TopItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.topLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Text(
-              'Hi there,',
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 20,
-                fontFamily: "Poppins",
+    return FittedBox(
+      fit: BoxFit.fill,
+      alignment: Alignment.topCenter,
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Hi there,',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: "Poppins",
+                ),
               ),
             ),
           ),
-        ),
-        Align(
-          alignment: Alignment.topLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Text(
-              'Rough day huh? Sit down and relax for a bit',
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 15,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w100,
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Rough day huh? Sit down and relax for a bit',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w100,
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(
-          height: 50,
-        ),
-        Timer(),
-        SizedBox(
-          height: 30,
-        ),
-        Text(
-          "Some of these exercise can help you to relax :",
-          style: TextStyle(fontFamily: "Poppins", fontWeight: FontWeight.w100),
-        ),
-      ],
+          SizedBox(
+            height: 50,
+          ),
+          Timer(),
+          SizedBox(
+            height: 30,
+          ),
+          Text(
+            "Some of these exercise can help you to relax :",
+            style:
+                TextStyle(fontFamily: "Poppins", fontWeight: FontWeight.w100),
+          ),
+        ],
+      ),
     );
   }
 }
