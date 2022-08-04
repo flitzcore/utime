@@ -3,8 +3,6 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:utime/model/exercise.dart';
 import 'package:utime/model/quotes_list.dart';
 
-bool closeTopContainer = false;
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -13,6 +11,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TopItem topItem = TopItem();
+  ScrollController controller = ScrollController();
+  bool closeTopContainer = false;
+  @override
+  void initState() {
+    super.initState();
+
+    controller.addListener(() {
+      setState(() {
+        //  topContainer = value;
+        closeTopContainer = controller.offset > 50;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -21,61 +34,129 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
       child: Column(
         children: [
-          AnimatedContainer(
+          AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
-            width: size.width,
-            alignment: Alignment.topCenter,
-            height: closeTopContainer ? 0 : categoryHeight,
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Hi there,',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: "Poppins",
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Rough day huh? Sit down and relax for a bit',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w100,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                Timer(),
-                SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  "Some of these exercise can help you to relax :",
-                  style: TextStyle(
-                      fontFamily: "Poppins", fontWeight: FontWeight.w100),
-                ),
-              ],
+            opacity: closeTopContainer ? 0 : 1,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: size.width,
+              alignment: Alignment.topCenter,
+              height: closeTopContainer ? 0 : categoryHeight,
+              child: topItem,
             ),
           ),
-          ListExercise()
+          Expanded(
+            child: SizedBox(
+              child: ListView.builder(
+                controller: controller,
+                physics: BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final Exercise exercise = exerciseList[index];
+                  //child:
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: InkWell(
+                      onTap: () {
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        //return DetailScreen(place: place);
+                        // }));
+                      },
+                      child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 2,
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.asset(exercise.imageAsset)),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(
+                                            exercise.name,
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text("data")
+                                        ],
+                                      )),
+                                )
+                              ])),
+                    ),
+                  );
+                },
+                itemCount: exerciseList.length,
+              ),
+            ),
+          )
         ],
       ),
     ));
+  }
+}
+
+class TopItem extends StatelessWidget {
+  const TopItem({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              'Hi there,',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: "Poppins",
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              'Rough day huh? Sit down and relax for a bit',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 15,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w100,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 50,
+        ),
+        Timer(),
+        SizedBox(
+          height: 30,
+        ),
+        Text(
+          "Some of these exercise can help you to relax :",
+          style: TextStyle(fontFamily: "Poppins", fontWeight: FontWeight.w100),
+        ),
+      ],
+    );
   }
 }
 
@@ -87,80 +168,9 @@ class ListExercise extends StatefulWidget {
 }
 
 class _ListExerciseState extends State<ListExercise> {
-  ScrollController controller = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    controller.addListener(() {
-      double value = controller.offset / 119;
-
-      setState(() {
-        //  topContainer = value;
-        closeTopContainer = controller.offset > 50;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: SizedBox(
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            final Exercise exercise = exerciseList[index];
-            //child:
-            return Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: InkWell(
-                onTap: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  //return DetailScreen(place: place);
-                  // }));
-                },
-                child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Hero(
-                                tag: "image_${exercise.name}",
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.asset(exercise.imageAsset))),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(
-                                      exercise.name,
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("data")
-                                  ],
-                                )),
-                          )
-                        ])),
-              ),
-            );
-          },
-          itemCount: exerciseList.length,
-        ),
-      ),
-    );
+    return Container();
   }
 }
 
